@@ -1,0 +1,8 @@
+source;share/yolox_param/hook/cmake_prefix_path.ps1
+source;share/yolox_param/hook/cmake_prefix_path.dsv
+source;share/yolox_param/hook/cmake_prefix_path.sh
+source;share/yolox_param/local_setup.bash
+source;share/yolox_param/local_setup.dsv
+source;share/yolox_param/local_setup.ps1
+source;share/yolox_param/local_setup.sh
+source;share/yolox_param/local_setup.zsh
