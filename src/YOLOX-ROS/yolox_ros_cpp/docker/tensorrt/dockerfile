@@ -1,0 +1,54 @@
+# pytorch/TensorRT/docker/Dockerfile
+# Base image starts with CUDA
+ARG BASE_IMG=nvidia/cuda:12.6.1-devel-ubuntu24.04
+FROM ${BASE_IMG} as base
+ENV BASE_IMG=nvidia/cuda:12.6.1-devel-ubuntu24.04
+
+ARG TENSORRT_VERSION
+ENV TENSORRT_VERSION=${TENSORRT_VERSION}
+RUN test -n "$TENSORRT_VERSION" || (echo "No tensorrt version specified, please use --build-arg TENSORRT_VERSION=x.y to specify a version." && exit 1)
+
+ARG PYTHON_VERSION=3.10
+ENV PYTHON_VERSION=${PYTHON_VERSION}
+
+ARG USE_CXX11_ABI
+ENV USE_CXX11=${USE_CXX11_ABI}
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install basic dependencies
+RUN apt-get update
+RUN apt install -y build-essential manpages-dev wget zlib1g software-properties-common git libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev ca-certificates curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev mecab-ipadic-utf8
+
+# Install TensorRT + dependencies
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/3bf863cc.pub
+RUN add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/ /"
+RUN apt-get update
+RUN TENSORRT_MAJOR_VERSION=`echo ${TENSORRT_VERSION} | cut -d '.' -f 1` && apt-get install -y tensorrt
+
+RUN apt update && apt install locales && \
+    locale-gen en_US en_US.UTF-8 && \
+    update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 && \
+    apt -y clean && \
+    rm -rf /var/lib/apt/lists/*
+ENV LANG=en_US.UTF-8
+
+RUN apt update && \
+    apt install -y git wget curl gnupg2 lsb-release
+
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null && \
+    sed -i -e 's/ubuntu .* main/ubuntu noble main/g' /etc/apt/sources.list.d/ros2.list && \
+    apt update && \
+    apt install -y ros-dev-tools \
+                    ros-jazzy-cv-bridge \
+                    ros-jazzy-generate-parameter-library \
+                    ros-jazzy-parameter-traits \
+                    ros-jazzy-ros-base \
+                    ros-jazzy-rqt-image-view \
+                    ros-jazzy-usb-cam \
+                    ros-jazzy-vision-msgs && \
+    apt -y clean && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY ./ros_entrypoint.sh /ros_entrypoint.sh
+RUN echo "source /ros_entrypoint.sh" >> /root/.bashrc

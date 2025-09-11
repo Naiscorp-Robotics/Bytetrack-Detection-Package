@@ -36,6 +36,7 @@ build/
 *.mp4
 log/
 
+# Unrelated directories
 naiscorp_hardware_interface/
 ros_video_player/
 **/SLAM\ NAV2\ Web\ UI/
@@ -43,3 +44,4 @@ sllidar_ros2/
 temi_bringup/
 temi_v1/
 web_robot_controller/
+hardware_interface_temi/

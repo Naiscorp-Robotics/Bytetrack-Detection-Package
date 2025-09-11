@@ -1,0 +1,28 @@
+version: '3.4'
+services:
+    yolox_ros:
+        container_name: yolox_tensorrt
+        build:
+            context: .
+            args:
+                - TENSORRT_VERSION=12.6
+                - PYTHON_VERSION=3.12
+        network_mode: host
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: 1
+                          capabilities: [gpu]
+        environment:
+            - DISPLAY=$DISPLAY
+            - NVIDIA_DISABLE_REQUIRE=1
+        volumes:
+            - $HOME/ros2_ws:/root/ros2_ws
+            - /tmp/.X11-unix:/tmp/.X11-unix
+        # devices:
+        #     - "/dev/video0:/dev/video0"
+        working_dir: /root/ros2_ws
+        tty: true
+        command: bash
