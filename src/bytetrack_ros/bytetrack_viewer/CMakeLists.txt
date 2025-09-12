@@ -58,7 +58,12 @@ ament_target_dependencies(bytetrack_viewer
   OpenCV
   bboxes_ex_msgs
 )
-target_link_libraries(bytetrack_viewer ${CURL_LIBRARY})
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+  target_link_libraries(bytetrack_viewer ${CURL_LIBRARY})
+  target_include_directories(bytetrack_viewer PRIVATE ${CURL_INCLUDE_DIR})
+endif()
+
 target_include_directories(bytetrack_viewer PRIVATE ${CURL_INCLUDE_DIR})
 target_include_directories(bytetrack_viewer PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -93,7 +98,10 @@ ament_target_dependencies(bytetrack_viewer_component
   OpenCV
   bboxes_ex_msgs
 )
-target_link_libraries(bytetrack_viewer_component ${CURL_LIBRARY})
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+  target_link_libraries(bytetrack_viewer_component ${CURL_LIBRARY})
+  target_include_directories(bytetrack_viewer_component PRIVATE ${CURL_INCLUDE_DIR})
+endif()
 target_include_directories(bytetrack_viewer_component PRIVATE ${CURL_INCLUDE_DIR})
 install(TARGETS bytetrack_viewer_component
   EXPORT export_${PROJECT_NAME}

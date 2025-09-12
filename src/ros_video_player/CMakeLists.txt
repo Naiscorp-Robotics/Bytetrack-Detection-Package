@@ -26,6 +26,13 @@ find_package(image_transport REQUIRED)
 find_package(camera_info_manager REQUIRED)
 find_package(OpenCV REQUIRED)
 
+# Handle CURL linking based on architecture
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+  set(CURL_INCLUDE_DIR "/usr/include")
+  set(CURL_LIBRARY "/usr/lib/x86_64-linux-gnu/libcurl.so")
+  set(CMAKE_INSTALL_RPATH "/usr/lib/x86_64-linux-gnu")
+endif()
+
 # executable
 add_executable(ros_video_player
   src/ros_video_player.cpp
@@ -41,6 +48,12 @@ ament_target_dependencies(ros_video_player
   sensor_msgs
   OpenCV
 )
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+  target_link_libraries(ros_video_player ${CURL_LIBRARY})
+  target_include_directories(ros_video_player PRIVATE ${CURL_INCLUDE_DIR})
+endif()
+
 target_include_directories(ros_video_player PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
@@ -77,6 +90,11 @@ ament_target_dependencies(ros_video_player_component
   sensor_msgs
   OpenCV
 )
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+  target_link_libraries(ros_video_player_component ${CURL_LIBRARY})
+  target_include_directories(ros_video_player_component PRIVATE ${CURL_INCLUDE_DIR})
+endif()
 
 install(TARGETS ros_video_player_component
   EXPORT export_${PROJECT_NAME}
