@@ -26,6 +26,18 @@ find_package(cv_bridge REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(bboxes_ex_msgs REQUIRED)
 
+# Handle CURL linking based on architecture
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+  set(CURL_INCLUDE_DIR "/usr/include")
+  set(CURL_LIBRARY "/usr/lib/x86_64-linux-gnu/libcurl.so")
+  set(CMAKE_INSTALL_RPATH "/usr/lib/x86_64-linux-gnu")
+endif()
+
+# Set RPATH handling
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
+
 add_compile_definitions(
   CV_BRIDGE_VERSION_MAJOR=${cv_bridge_VERSION_MAJOR}
   CV_BRIDGE_VERSION_MINOR=${cv_bridge_VERSION_MINOR}
@@ -46,6 +58,8 @@ ament_target_dependencies(bytetrack_viewer
   OpenCV
   bboxes_ex_msgs
 )
+target_link_libraries(bytetrack_viewer ${CURL_LIBRARY})
+target_include_directories(bytetrack_viewer PRIVATE ${CURL_INCLUDE_DIR})
 target_include_directories(bytetrack_viewer PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
@@ -79,6 +93,8 @@ ament_target_dependencies(bytetrack_viewer_component
   OpenCV
   bboxes_ex_msgs
 )
+target_link_libraries(bytetrack_viewer_component ${CURL_LIBRARY})
+target_include_directories(bytetrack_viewer_component PRIVATE ${CURL_INCLUDE_DIR})
 install(TARGETS bytetrack_viewer_component
   EXPORT export_${PROJECT_NAME}
   DESTINATION lib

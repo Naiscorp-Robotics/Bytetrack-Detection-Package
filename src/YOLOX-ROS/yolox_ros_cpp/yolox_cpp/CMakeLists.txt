@@ -12,16 +12,22 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake_auto REQUIRED)
+find_package(OpenCV 4 REQUIRED)
+find_package(fmt REQUIRED)
 ament_auto_find_build_dependencies()
 
 option(YOLOX_USE_OPENVINO    "Use OpenVINO"  OFF)
-option(YOLOX_USE_TENSORRT    "Use TensorRT"  OFF)
+option(YOLOX_USE_TENSORRT    "Use TensorRT"  ON)
 option(YOLOX_USE_ONNXRUNTIME "Use ONNXRuntime"  OFF)
 option(YOLOX_USE_TFLITE      "Use tflite"  OFF)
 option(JETSON                "Use Jetson"  OFF)
 
 if(JETSON)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include/aarch64-linux-gnu/ -L/usr/lib/aarch64-linux-gnu/")
+  set(YOLOX_USE_TENSORRT ON)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+  # For x86_64 systems (like your 4090 server)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include/x86_64-linux-gnu/ -L/usr/lib/x86_64-linux-gnu/")
   set(YOLOX_USE_TENSORRT ON)
 endif()
 
@@ -87,7 +93,8 @@ configure_file(
 ament_auto_add_library(yolox_cpp SHARED ${TARGET_SRC})
 ament_target_dependencies(yolox_cpp ${TARGET_DPENDENCIES})
 ament_export_dependencies(${TARGET_DPENDENCIES})
-target_link_libraries(yolox_cpp ${TARGET_LIBS})
+target_link_libraries(yolox_cpp ${TARGET_LIBS} ${OpenCV_LIBS} fmt::fmt)
+target_include_directories(yolox_cpp PUBLIC ${OpenCV_INCLUDE_DIRS})
 
 if (YOLOX_USE_TFLITE)
   target_include_directories(yolox_cpp PUBLIC ${TFLITE_INCLUDES})
