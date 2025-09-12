@@ -8,6 +8,9 @@ This project implements a camera system, with object detection and object tracki
 - CURL
 - TensorRT
 - Libfmt9
+- ros-humble-rosidl-generator-py 
+- ros-humble-rosidl-typesupport-c 
+- python3-cv-bridge
 - [bbox_ex_msgs](https://github.com/Ar-Ray-code/bbox_ex_msgs)
 - [YOLOX-ROS](https://github.com/Ar-Ray-code/YOLOX-ROS)
 - [ros_video_player](https://github.com/fateshelled/ros_video_player)
@@ -31,4 +34,5 @@ ros2 launch bytetrack_ros bytetrack_tensorrt.launch.py
 ```
 
 ## Demo
-![demo](demo.png)
+Human tracking examples:
+![demo](assets/demo.png)
