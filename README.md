@@ -1,4 +1,4 @@
-This project implements a camera system, with object detection and object tracking, to recognize human arrival and departure. 
+This project implements a camera system, with object detection and object tracking, to recognize human arrival and departure.  
 Project contains: 
 - YOLOX model for object detection
 - ByteTrack for object tracking
