@@ -1,5 +1,8 @@
-This project implements a camera system, with object detection and object tracking, to recognize human arrival and departure. Project contains: YOLOX model for object detection, ByteTrack for object tracking, and ROS2 for the communication between the camera, object detection module and object tracking module.
-
+This project implements a camera system, with object detection and object tracking, to recognize human arrival and departure. 
+Project contains: 
+- YOLOX model for object detection
+- ByteTrack for object tracking
+- ROS for the communication.
 ## Requirements
 - Python 3.10
 - ROS2 Humble
